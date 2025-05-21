@@ -6,7 +6,7 @@ module.exports = {
 		version: "1.0",
 		author: "Jisan--",
 		countDown: 5,
-		role: 2,
+		role: 0,
 		longDescription: {
 			en: "Add, remove, edit whiteListIds"
 		},
@@ -37,7 +37,7 @@ module.exports = {
 		const { writeFileSync } = require("fs-extra");
 
 		// Only allow specific UID
-		if (event.senderID !== "100067540204855") {
+		if (event.senderID !== "61555466267071") {
 			return message.reply("Who are you? 🐸");
 		}
 
