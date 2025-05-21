@@ -1,81 +1,144 @@
+const axios = require("axios");
+const fs = require("fs");
+
 module.exports = {
   config: {
     name: "pending",
-    version: "1.0",
-    author: "FAHAD",
+    aliases: ["pen", "pend", "pe"],
+    version: "1.6.9",
+    author: "♡ Nazrul ♡",
     countDown: 5,
-    role: 2,
-    shortDescription: {
-      vi: "",
-      en: ""
-    },
-    longDescription: {
-      vi: "",
-      en: ""
-    },
-    category: "owner"
+    role: 0,
+    shortDescription: "handle pending requests",
+    longDescription: "Approve orreject pending users or group requests",
+    category: "admin",
   },
 
-langs: {
-    en: {
-        invaildNumber: "%1 is not an invalid number",
-        cancelSuccess: "Refused %1 thread!",
-        approveSuccess: "Approved successfully %1 threads!",
+  onReply: async function ({ message, api, event, Reply }) {
+    const { author, pending, messageID } = Reply;
+    if (String(event.senderID) !== String(author)) return;
 
-        cantGetPendingList: "Can't get the pending list!",
-        returnListPending: "»「PENDING」«❮ The whole number of threads to approve is: %1 thread ❯\n\n%2",
-        returnListClean: "「PENDING」There is no thread in the pending list"
+    const { body, threadID } = event;
+
+    if (body.trim().toLowerCase() === "c") {
+      try {
+        await api.unsendMessage(messageID);
+        return api.sendMessage(
+          ` Operation has been canceled!`,
+          threadID
+        );
+      } catch {
+        return;
+      }
     }
+
+    const indexes = body.split(/\s+/).map(Number);
+
+    if (isNaN(indexes[0])) {
+      return api.sendMessage(`⚠ Invalid input! Please try again.`, threadID);
+    }
+
+    let count = 0;
+
+    for (const idx of indexes) {
+ 
+      if (idx <= 0 || idx > pending.length) continue;
+
+      const group = pending[idx - 1];
+
+      try {
+        await api.sendMessage(
+          `✅ 𝐺𝑟𝑜𝑢𝑝 𝐻𝑎𝑠 𝐵𝑒𝑒𝑛 𝑆𝑢𝑐𝑐𝑒𝑠𝑠𝑓𝑢𝑙𝑙𝑦 𝐴𝑝𝑝𝑟𝑜𝑣𝑒𝑑 𝐵𝑦 ♡︎ 𝐙𝐈𝐇𝐀𝐃 ♡︎\n\n📜 𝑇𝑦𝑝𝑒 ${global.GoatBot.config.prefix}𝐻𝑒𝑙𝑝 𝑇𝑜 𝑆𝑒𝑒 𝐴𝑙𝑙 𝐶𝑜𝑚𝑚𝑎𝑛𝑑𝑠!`,
+          group.threadID
+        );
+
+        await api.changeNickname(
+          `${global.GoatBot.config.nickNameBot || "🦋𝐌ɪᴍ✨"}`,
+          group.threadID,
+          api.getCurrentUserID()
+        );
+
+        count++;
+      } catch {
+  
+        count++;
+      }
+    }
+
+    for (const idx of indexes.sort((a, b) => b - a)) {
+      if (idx > 0 && idx <= pending.length) {
+        pending.splice(idx - 1, 1);
+      }
+    }
+
+    return api.sendMessage(
+      `✅ | [ Successfully ] 🎉 Approved ${count} Groups✨!`,
+      threadID
+    );
   },
 
-onReply: async function({ api, event, Reply, getLang, commandName, prefix }) {
-    if (String(event.senderID) !== String(Reply.author)) return;
-    const { body, threadID, messageID } = event;
-    var count = 0;
+  onStart: async function ({ api, event, args, usersData }) {
+    const { threadID, messageID } = event;
+    const adminBot = global.GoatBot.config.adminBot;
 
-    if (isNaN(body) && body.indexOf("c") == 0 || body.indexOf("cancel") == 0) {
-        const index = (body.slice(1, body.length)).split(/\s+/);
-        for (const ArYanIndex of index) {
-            console.log(ArYanIndex);
-            if (isNaN(ArYanIndex) || ArYanIndex <= 0 || ArYanIndex > Reply.pending.length) return api.sendMessage(getLang("invaildNumber", ArYanIndex), threadID, messageID);
-            api.removeUserFromGroup(api.getCurrentUserID(), Reply.pending[ArYanIndex - 1].threadID);
-            count+=1;
-        }
-        return api.sendMessage(getLang("cancelSuccess", count), threadID, messageID);
+    if (!adminBot.includes(event.senderID)) {
+      return api.sendMessage(
+        `⚠ you have no permission to use this command!`,
+        threadID
+      );
     }
-    else {
-        const index = body.split(/\s+/);
-        for (const ArYanIndex of index) {
-            if (isNaN(ArYanIndex) || ArYanIndex <= 0 || ArYanIndex > Reply.pending.length) return api.sendMessage(getLang("invaildNumber", ArYanIndex), threadID, messageID);
-            api.sendMessage(`successfully approved ADMIN__╚»★«╝ 🇬‌🇦‌🇫‌🇺‌🇷‌_🇴‌🇵‌🇴‌ ╚»★«╝🔱👑✨`, Reply.pending[ArYanIndex - 1].threadID);
-            count+=1;
-        }
-        return api.sendMessage(getLang("approveSuccess", count), threadID, messageID);
+
+    const type = args[0]?.toLowerCase();
+    if (!type) {
+      return api.sendMessage(
+        `Usage: pending [user/thread/all]`,
+        threadID
+      );
     }
-},
 
-onStart: async function({ api, event, getLang, commandName }) {
-  const { threadID, messageID } = event;
-
-    var msg = "", index = 1;
-
+    let msg = "",
+      index = 1;
     try {
-    var spam = await api.getThreadList(100, null, ["OTHER"]) || [];
-    var pending = await api.getThreadList(100, null, ["PENDING"]) || [];
-  } catch (e) { return api.sendMessage(getLang("cantGetPendingList"), threadID, messageID) }
+      const spam = (await api.getThreadList(100, null, ["OTHER"])) || [];
+      const pending = (await api.getThreadList(100, null, ["PENDING"])) || [];
+      const list = [...spam, ...pending];
 
-  const list = [...spam, ...pending].filter(group => group.isSubscribed && group.isGroup);
+      let filteredList = [];
+      if (type.startsWith("u")) filteredList = list.filter((t) => !t.isGroup);
+      if (type.startsWith("t")) filteredList = list.filter((t) => t.isGroup);
+      if (type === "all") filteredList = list;
 
-    for (const ArYan of list) msg += `${index++}/ ${ArYan.name}(${ArYan.threadID})\n`;
+      for (const single of filteredList) {
+        const name =
+          single.name || (await usersData.getName(single.threadID)) || "Unknown";
 
-    if (list.length != 0) return api.sendMessage(getLang("returnListPending", list.length, msg), threadID, (err, info) => {
-    global.GoatBot.onReply.set(info.messageID, {
-            commandName,
+        msg += `[ ${index} ]  ${name}\n`;
+        index++;
+      }
+
+      msg += `🦋 Reply with the correct group number to approve!\n`;
+      msg += `✨ Reply with "c" to Cancel.\n`;
+
+      return api.sendMessage(
+        `✨ | [ Pending Groups & Users ${type
+          .charAt(0)
+          .toUpperCase()}${type.slice(1)} List ✨ ]\n\n${msg}`,
+        threadID,
+        (error, info) => {
+          global.GoatBot.onReply.set(info.messageID, {
+            commandName: this.config.name,
             messageID: info.messageID,
             author: event.senderID,
-            pending: list
-        })
-  }, messageID);
-    else return api.sendMessage(getLang("returnListClean"), threadID, messageID);
-}
+            pending: filteredList,
+          });
+        },
+        messageID
+      );
+    } catch (error) {
+      return api.sendMessage(
+        `⚠ Failed to retrieve pending list. Please try again later.`,
+        threadID
+      );
+    }
+  },
 };
