@@ -1,66 +1,51 @@
-const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
-
-const baseApiUrl = async () => {
-  const base = await axios.get("https://raw.githubusercontent.com/mahmudx7/exe/main/baseApiUrl.json");
-  return base.data.mahmud;
-};
+const axios = require('axios');
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports = {
   config: {
     name: "poli",
-    author: "MahMUD",
-    version: "1.7",
-    cooldowns: 10,
+    aliases: ['polination'],
+    version: "1.1",
+    author: "samir",
+    countDown: 10,
     role: 0,
-    category: "Image gen",
-    guide: {
-      en: "{p}poli <prompt>"
-    }
+    shortDescription: {
+      en: 'Text to Image'
+    },
+    longDescription: {
+      en: "generate image from polination"
+    },
+    category: "IMAGE",
+    guide: "{pn} your prompt ",
   },
 
-  onStart: async function ({ message, args, api, event }) {
-    if (args.length === 0) {
-      return api.sendMessage("❌ | Please provide a prompt.", event.threadID, event.messageID);
-    }
+  onStart: async ({ api, event, args }) => {
+    let { threadID, messageID } = event;
+    let query = args.join(" ");
+    if (!query) return api.sendMessage("put text/query", threadID, messageID);
 
-    const prompt = args.join(" ");
-    const cacheDir = path.join(__dirname, "cache");
-    if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
+    let dir = path.join(__dirname, "cache"); // Use path.join() to create the cache directory
+    fs.ensureDirSync(dir); // Create the directory if it doesn't exist
 
-    api.sendMessage("𝐖𝐚𝐢𝐭 𝐤𝐨𝐫𝐨 𝐣𝐚𝐧 <😘", event.threadID, event.messageID);
+    let filePath = path.join(dir, "poli.png");
 
     try {
-      const styles = ["ultra detailed", "4k resolution", "realistic lighting", "artstation", "digital painting"];
-      const imagePaths = [];
+      const poli = (await axios.get(`https://image.pollinations.ai/prompt/${query}`, {
+        responseType: "arraybuffer",
+      })).data;
 
-      for (let i = 0; i < 4; i++) {
-        const enhancedPrompt = `${prompt}, ${styles[i % styles.length]}`;
+      fs.writeFileSync(filePath, Buffer.from(poli, "utf-8"));
 
-        const response = await axios.post(`${await baseApiUrl()}/api/poli/generate`, {
-          prompt: enhancedPrompt
-        }, {
-          responseType: "arraybuffer",
-          headers: {
-            "author": module.exports.config.author
-          }
-        });
-
-        const filePath = path.join(cacheDir, `generated_${Date.now()}_${i}.png`);
-        fs.writeFileSync(filePath, response.data);
-        imagePaths.push(filePath);
-      }
-
-      const attachments = imagePaths.map(p => fs.createReadStream(p));
-      message.reply({
-        body: "✅ | Here are images generated from your prompt:",
-        attachment: attachments
-      });
-
+      api.sendMessage({
+        body: "Image will be deleted after 1 hour!",
+        attachment: fs.createReadStream(filePath)
+      }, threadID, () => {
+        fs.unlinkSync(filePath);
+      }, messageID);
     } catch (error) {
-      console.error("Image generation error:", error);
-      message.reply("❌ | Couldn't generate images. Try again later.");
+      console.error(error);
+      api.sendMessage("An error occurred while generating the image.", threadID, messageID);
     }
-  }
+  },
 };
