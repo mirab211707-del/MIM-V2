@@ -27,14 +27,14 @@
   "whiteListMode": {
     "enable": false,
     "whiteListIds": ["100067540204855",
-"61555466267071",
+"100078769420993",
       "100077548561768"
     ],
     "notes": "if you enable this feature, only the ids in the whiteListIds list can use the bot"
   },
   "whiteListModeThread": {
     "enable": false,
-    "whiteListThreadIds": ["100067540204855","61555466267071"],
+    "whiteListThreadIds": ["100067540204855","100078769420993"],
     "notes": "if you enable this feature, only the thread in the whiteListThreadIds list can use the bot",
     "how_it_work": "if you enable both whiteListMode and whiteListModeThread, the system will check if the user is in whiteListIds, then check if the thread is in whiteListThreadIds, if one of the conditions is true, the user can use the bot"
   },
