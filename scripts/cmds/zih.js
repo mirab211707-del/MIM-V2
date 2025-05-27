@@ -18,7 +18,7 @@ module.exports.config = {
 module.exports.onStart = async ({ api, args, message, event }) => {
   try {
     if (!allowedUIDs.includes(event.senderID)) {
-      return message.reply("Only users approved by Boss Zihad can drop bombs here. You're not on the list, bro!🙂🫶");
+      return message.reply("Only users approved by Zihad can drop bombs here. You're not on the list, bro!🙂🫶");
     }
 
     const number = args[0];
