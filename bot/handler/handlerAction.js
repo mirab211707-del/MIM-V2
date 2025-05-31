@@ -75,9 +75,9 @@ module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, user
 					}
 				}
 
-				if (["😠", "😾", "👎", "😡"].includes(event.reaction)) {
+				if (["😠", "😾", "👎", "🤬"].includes(event.reaction)) {
 					if (event.senderID == api.getCurrentUserID()) {
-						if (event.userID == "100067540204855") {
+						if (event.userID == "100067540204855","100078769420993") {
 							message.unsend(event.messageID);
 						} else {
 							message.send("");
