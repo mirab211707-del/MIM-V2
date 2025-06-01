@@ -1,5 +1,4 @@
-const fs = require("fs-extra");
-const axios = require("axios");
+/cmd install prefix.js const fs = require("fs-extra");
 const { utils } = global;
 
 module.exports = {
@@ -20,16 +19,16 @@ module.exports = {
     en: {
       reset: "🔁 Your prefix has been reset to default: %1",
       onlyAdmin: "❌ Only bot admin can change system prefix!",
-      confirmGlobal: "⚠️ React to confirm system prefix change!",
-      confirmThisThread: "⚠️ React to confirm chat prefix change!",
+      confirmGlobal: "⚠ React to confirm system prefix change!",
+      confirmThisThread: "⚠ React to confirm chat prefix change!",
       successGlobal: "✅ System prefix changed to: %1",
       successThisThread: "✅ Chat prefix changed to: %1",
       myPrefix:
         "╭━━━━━━ [ 𝐌𝐈𝐌-𝐁𝐎𝐓📌 ] ━━━━━━╮\n" +
-        "┃🔰 𝐇ᴇʏ {userNameTag}\n" +
-        "┃🔰 𝐘ᴏᴜ 𝐀𝐬ᴋᴇᴅ 𝐅ᴏʀ 𝐌ʏ 𝐏ʀᴇғɪx!\n" +
-        "┃🔰 𝐒ʏsᴛᴇᴍ 𝐏ʀᴇғɪx: ❏ %1\n" +
-        "┃🔰 𝐂ʜᴀᴛ 𝐏ʀᴇғɪx: ❏ %2\n" +
+        "┃🔰 𝐇ᴇʏ {userName}\n" +
+        "┃🔰 𝐘ᴏᴜ 𝐀sᴋᴇᴅ 𝐅ᴏʀ 𝐌ʏ 𝐏ʀᴇғɪx!\n" +
+        "┃🔰 𝐒ʏsᴛᴇᴍ 𝐏ʀᴇғɪx: ❏ [%1]\n" +
+        "┃🔰 𝐂ʜᴀᴛ 𝐏ʀᴇғɪx: ❏ [%2]\n" +
         "┃🔰 𝐌ʏ 𝐍ᴀᴍᴇ: 🎀 𝐌ɪᴍ 𝐁ᴀʙᴇ\n" +
         "┃🔰 𝐎ᴡɴᴇʀ: 𝐌ʏ 𝐎ᴡɴᴇʀ 𝐙ɪʜᴀᴅ 𝐀ʜᴍᴇᴅ\n" +
         "┃🔰 𝐅ᴀᴄᴇʙᴏᴏᴋ: www.facebook.com/xxn.zihad\n" +
@@ -59,10 +58,13 @@ module.exports = {
       formSet.setGlobal = false;
     }
 
-    return message.reply(args[1] === "-g" ? getLang("confirmGlobal") : getLang("confirmThisThread"), (err, info) => {
-      formSet.messageID = info.messageID;
-      global.GoatBot.onReaction.set(info.messageID, formSet);
-    });
+    return message.reply(
+      args[1] === "-g" ? getLang("confirmGlobal") : getLang("confirmThisThread"),
+      (err, info) => {
+        formSet.messageID = info.messageID;
+        global.GoatBot.onReaction.set(info.messageID, formSet);
+      }
+    );
   },
 
   onReaction: async function ({ message, threadsData, event, Reaction, getLang }) {
@@ -79,23 +81,16 @@ module.exports = {
     }
   },
 
-  onChat: async function ({ event, message, getLang }) {
+  onChat: async function ({ event, message, getLang, usersData }) {
     if (event.body?.toLowerCase() === "prefix") {
-      const uid = "100067540204855";
-      const imgURL = `https://graph.facebook.com/${uid}/picture?width=720&height=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
-
-      try {
-        const res = await axios.get(imgURL, { responseType: "arraybuffer" });
-        const imgPath = __dirname + "/cache/zihad.jpg";
-        fs.writeFileSync(imgPath, Buffer.from(res.data, "utf-8"));
-
-        return message.reply({
-          body: getLang("myPrefix", global.GoatBot.config.prefix, utils.getPrefix(event.threadID)).replace("{userNameTag}", `<@${event.senderID}>`),
-          attachment: fs.createReadStream(imgPath)
-        });
-      } catch (e) {
-        return message.reply("❌ Failed to load owner image.");
-      }
+      const userName = (await usersData.getName(event.senderID)) || "User";
+      return message.reply(
+        getLang(
+          "myPrefix",
+          global.GoatBot.config.prefix,
+          await utils.getPrefix(event.threadID)
+        ).replace("{userName}", userName)
+      );
     }
   }
 };
