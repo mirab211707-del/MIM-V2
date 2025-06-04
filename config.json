@@ -13,7 +13,7 @@
   "checkApproval": true,
   "language": "en",
   "notesLanguage": "change to your language with ISO 639-1 code, available languages: vi (Vietnamese), en (English)",
-  "nickNameBot": "YOU",
+  "nickNameBot": "𝐌𝐈𝐌___//🅑🅞🅣 ‎🩷🌷🎀",
   "prefix": "/",
   "adminOnly": {
     "enable": false,
@@ -21,7 +21,11 @@
   },
   "adminBot": [
     "100067540204855",
-    ""
+    "100078769420993",
+"61558166309783",
+"61572940124387",
+"100087187345465",
+"61575769000448"
   ],
   "whiteListMode": {
     "enable": false,
