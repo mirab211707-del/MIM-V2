@@ -1,6 +1,6 @@
 module.exports = {
   config: {
-    name: "Mim tag",
+    name: "Mim-tag",
     version: "1.3",
     author: "ZIHAD",
     countDown: 5,
