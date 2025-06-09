@@ -2,7 +2,7 @@ const fs = require("fs");
 
 module.exports = {
   config: {
-    name: "😍",
+    name: "🐰",
     version: "1.0",
     author: "RANA", //Don't change the credit because I made it. Any problems to contact me. https://facebook.com/100063487970328
     countDown: 5,
@@ -17,12 +17,12 @@ module.exports = {
   onChat: async function ({ event, message }) {
     if (event.body) {
       const body = event.body.toLowerCase();
-      const keywords = ["😍", "💙", "💓"]; 
+      const keywords = ["🐰", "🐇", "khorgos"]; 
 
       if (keywords.includes(body)) {
         return message.reply({
-          body: " ~আমি ও তোমাকে ভালোবাসি..!! 🐸😆",
-          attachment: fs.createReadStream("./scripts/cmds/S1LK2/amio-tmk-onk.mp3"),
+          body: " ~  এই খরগোশ, গাজর খাবি নি তুই..!!🥀",
+          attachment: fs.createReadStream("./scripts/cmds/S1LK2/khorgos.mp3"),
         });
       }
     }

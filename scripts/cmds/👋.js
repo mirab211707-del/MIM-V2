@@ -4,7 +4,7 @@ module.exports = {
   config: {
     name: "👋",
     version: "1.0",
-    author: "ZIHAD",
+    author: "RANA", //Don't change the credit because I made it. Any problems to contact me. https://facebook.com/100063487970328
     countDown: 5,
     role: 0,
     shortDescription: "no prefix",
@@ -17,11 +17,11 @@ module.exports = {
   onChat: async function ({ event, message }) {
     if (event.body) {
       const body = event.body.toLowerCase();
-      const keywords = ["byy", "by", "bye","👋"]; 
+      const keywords = ["👋", "by", "bye"]; 
 
       if (keywords.includes(body)) {
         return message.reply({
-          body: "ADMIN-ZIHAD",
+          body: " ",
           attachment: fs.createReadStream("./scripts/cmds/S1LK2/byebye.mp3"),
         });
       }

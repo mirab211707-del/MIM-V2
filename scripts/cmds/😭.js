@@ -1,22 +1,30 @@
-module.exports = {
- config: {
-	 name: "😿",
-	 version: "1.0",
-	 author: "AceGun",
-	 countDown: 5,
-	 role: 0,
-	 shortDescription: "no prefix",
-	 longDescription: "no prefix",
-	 category: "no prefix",
- },
+const fs = require("fs");
 
- onStart: async function(){}, 
- onChat: async function({ event, message, getLang }) {
- if (event.body && event.body.toLowerCase() === "😿") {
- return message.reply({
- body: "     「𝗕𝗢𝗧ADMIN-ZIHAD」",
- attachment: await global.utils.getStreamFromURL("https://drive.google.com/uc?id=1AKkT674FKMBUhQDd74162il4Ug4pfKtJ")
- });
- }
- }
-}
+module.exports = {
+  config: {
+    name: "😭",
+    version: "1.0",
+    author: "RANA", //Don't change the credit because I made it. Any problems to contact me. https://facebook.com/100063487970328
+    countDown: 5,
+    role: 0,
+    shortDescription: "no prefix",
+    longDescription: "no prefix",
+    category: "voice",
+  },
+
+  onStart: async function () {},
+
+  onChat: async function ({ event, message }) {
+    if (event.body) {
+      const body = event.body.toLowerCase();
+      const keywords = ["😭", "😥", "🥹"]; 
+
+      if (keywords.includes(body)) {
+        return message.reply({
+          body: " কান্না করতেছ কেন তুমি?🥀",
+          attachment: fs.createReadStream("./scripts/cmds/S1LK2/kanna.mp3"),
+        });
+      }
+    }
+  },
+};
