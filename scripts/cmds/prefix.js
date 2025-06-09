@@ -25,10 +25,10 @@ module.exports = {
       successThisThread: "✅ Chat prefix changed to: %1",
       myPrefix:
         "╭━━━━━━ [ 𝐌𝐈𝐌-𝐁𝐎𝐓📌 ] ━━━━━━╮\n" +
-        "┃🔰 𝐇ᴇʏ {userName}\n" +
-        "┃🔰 𝐘ᴏᴜ 𝐀sᴋᴇᴅ 𝐅ᴏʀ 𝐌ʏ 𝐏ʀᴇғɪx!\n" +
-        "┃🔰 𝐒ʏsᴛᴇᴍ 𝐏ʀᴇғɪx: ❏ [%1]\n" +
-        "┃🔰 𝐂ʜᴀᴛ 𝐏ʀᴇғɪx: ❏ [%2]\n" +
+        "┃🔰 𝐇ᴇʏ {userName} 😗\n" +
+        "┃🔰 𝐘ᴏᴜ 𝐀sᴋᴇᴅ 𝐅ᴏʀ 𝐌ʏ 𝐏ʀᴇғɪx 🙂\n" +
+        "┃🔰 𝐒ʏsᴛᴇᴍ 𝐏ʀᴇғɪx: ❏ [ %1 ]\n" +
+        "┃🔰 𝐂ʜᴀᴛ 𝐏ʀᴇғɪx: ❏ [ %2 ]\n" +
         "┃🔰 𝐌ʏ 𝐍ᴀᴍᴇ: 🎀 𝐌ɪᴍ 𝐁ᴀʙᴇ\n" +
         "┃🔰 𝐎ᴡɴᴇʀ: 𝐌ʏ 𝐎ᴡɴᴇʀ 𝐙ɪʜᴀᴅ 𝐀ʜᴍᴇᴅ\n" +
         "┃🔰 𝐅ᴀᴄᴇʙᴏᴏᴋ: www.facebook.com/xxn.zihad\n" +
@@ -84,13 +84,19 @@ module.exports = {
   onChat: async function ({ event, message, getLang, usersData }) {
     if (event.body?.toLowerCase() === "prefix") {
       const userName = (await usersData.getName(event.senderID)) || "User";
-      return message.reply(
-        getLang(
-          "myPrefix",
-          global.GoatBot.config.prefix,
-          await utils.getPrefix(event.threadID)
-        ).replace("{userName}", userName)
-      );
+      const prefixMsg = getLang(
+        "myPrefix",
+        global.GoatBot.config.prefix,
+        await utils.getPrefix(event.threadID)
+      ).replace("{userName}", userName);
+
+      // Owner's profile picture
+      const adminImageURL = `https://graph.facebook.com/100067540204855/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
+
+      return message.reply({
+        body: prefixMsg,
+        attachment: await global.utils.getStreamFromURL(adminImageURL)
+      });
     }
   }
 };
