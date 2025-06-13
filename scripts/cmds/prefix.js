@@ -24,15 +24,14 @@ module.exports = {
       successGlobal: "✅ System prefix changed to: %1",
       successThisThread: "✅ Chat prefix changed to: %1",
       myPrefix:
-        "╭━━━━━━ [ 𝐌𝐈𝐌-𝐁𝐎𝐓📌 ] ━━━━━━╮\n" +
-        "┃🔰 𝐇ᴇʏ {userName} 😗\n" +
-        "┃🔰 𝐘ᴏᴜ 𝐀sᴋᴇᴅ 𝐅ᴏʀ 𝐌ʏ 𝐏ʀᴇғɪx 🙂\n" +
-        "┃🔰 𝐒ʏsᴛᴇᴍ 𝐏ʀᴇғɪx: ❏ [ %1 ]\n" +
-        "┃🔰 𝐂ʜᴀᴛ 𝐏ʀᴇғɪx: ❏ [ %2 ]\n" +
+        "╭━━ [ 𝐌𝐈𝐌-𝐁𝐎𝐓📌 ] ━━╮\n" +
+        "┃🔰 𝐇ᴇʏ {userName} বেবি 😗\n" +
+        "┃🔰 𝐒ʏsᴛᴇᴍ 𝐏ʀᴇғɪx: ❏ [  %1  ]\n" +
+        "┃🔰 𝐂ʜᴀᴛ 𝐏ʀᴇғɪx: ❏ [  %2  ]\n" +
         "┃🔰 𝐌ʏ 𝐍ᴀᴍᴇ: 🎀 𝐌ɪᴍ 𝐁ᴀʙᴇ\n" +
-        "┃🔰 𝐎ᴡɴᴇʀ: 𝐌ʏ 𝐎ᴡɴᴇʀ 𝐙ɪʜᴀᴅ 𝐀ʜᴍᴇᴅ\n" +
-        "┃🔰 www.facebook.com/xxn.zihad\n" +
-        "╰━━━━━━━━━━━━━━━━━━━━━━╯"
+        "┃🔰 𝐎ᴡɴᴇʀ: ⚜️ Z𝗂𝗁𝖺𝖽 𝖠𝗁𝗆𝖾𝖽 \n" +
+        "┃🔰www.facebook.com/xxn.zihad\n" +
+        "╰━━━━━━━━━━━━━━╯"
     }
   },
 
@@ -90,12 +89,11 @@ module.exports = {
         await utils.getPrefix(event.threadID)
       ).replace("{userName}", userName);
 
-      // Admin profile pic link
-      const adminImageURL = `https://graph.facebook.com/100067540204855/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
+      const userPic = `https://graph.facebook.com/${event.senderID}/picture?width=720&height=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
 
       return message.reply({
         body: prefixMsg,
-        attachment: await global.utils.getStreamFromURL(adminImageURL)
+        attachment: await global.utils.getStreamFromURL(userPic)
       });
     }
   }
