@@ -6,15 +6,15 @@ const canvas = require("canvas");
 
 module.exports = {
   config: {
-    name: "uptime",
-    version: "1.0",
+    name: "uptime2",
+    version: "2.1",
     author: "ZIHAD",
     role: 0,
-    shortDescription: "Uptime info with ping, date, time - stacked with random colors",
-    longDescription: "Shows uptime, ping, date and time each on its own colored line, moved slightly up",
+    shortDescription: "Stylish uptime info image",
+    longDescription: "Show uptime, ping, date, time, and credits with colorful centered text on GIF",
     category: "info",
     guide: "{p}uptime",
-    aliases: ["up", "upt", "time", "date"]
+    aliases: ["s", "upt2", "time", "date"]
   },
 
   onStart: async function ({ api, event }) {
@@ -27,38 +27,43 @@ module.exports = {
     const pingText = `Ping: ${Math.floor(Math.random() * 21) + 10}ms`;
     const dateText = moment().tz("Asia/Dhaka").format("DD/MM/YYYY");
     const timeText = moment().tz("Asia/Dhaka").format("hh:mm A");
+    const creditText = "ADMIN-ZIHAD";
 
-    const bgUrl = "https://i.imgur.com/RQMMIdX.jpeg";
+    const bgUrl = "https://i.imgur.com/Ewwx621.gif"; // This is a GIF, will load first frame only
+
     const background = await canvas.loadImage(bgUrl);
     const canvasObj = canvas.createCanvas(background.width, background.height);
     const ctx = canvasObj.getContext("2d");
 
     ctx.drawImage(background, 0, 0);
-    ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    ctx.font = "bold 24px sans-serif";
-
-    const startY = canvasObj.height / 5 - 10;  // একটু উপরে
-    const lineHeight = 36;
+    ctx.textBaseline = "middle";
 
     function getRandomColor() {
-      const letters = "0123456789ABCDEF";
-      let color = "#";
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
+      const colors = ["#FF5E5E", "#FFD700", "#00FFFF", "#00FF7F", "#FF69B4", "#87CEEB", "#FFA500"];
+      return colors[Math.floor(Math.random() * colors.length)];
     }
 
-    function drawLine(text, lineNumber) {
-      ctx.fillStyle = getRandomColor();
-      ctx.fillText(text, canvasObj.width / 2, startY + lineHeight * lineNumber);
-    }
+    ctx.font = "bold 30px sans-serif";
+    const centerX = canvasObj.width / 2;
+    const centerY = canvasObj.height / 2;
+    const spacing = 40;
 
-    drawLine(uptimeText, 0);
-    drawLine(pingText, 1);
-    drawLine(dateText, 2);
-    drawLine(timeText, 3);
+    ctx.fillStyle = getRandomColor();
+    ctx.fillText(uptimeText, centerX, centerY - spacing * 1.5);
+
+    ctx.fillStyle = getRandomColor();
+    ctx.fillText(pingText, centerX, centerY - spacing * 0.5);
+
+    ctx.fillStyle = getRandomColor();
+    ctx.fillText(dateText, centerX, centerY + spacing * 0.5);
+
+    ctx.fillStyle = getRandomColor();
+    ctx.fillText(timeText, centerX, centerY + spacing * 1.5);
+
+    ctx.font = "bold 24px sans-serif";
+    ctx.fillStyle = getRandomColor();
+    ctx.fillText(creditText, centerX, canvasObj.height - 40);
 
     const outputPath = path.join(__dirname, "uptime_output.png");
     const out = fs.createWriteStream(outputPath);
@@ -67,7 +72,7 @@ module.exports = {
 
     out.on("finish", () => {
       api.sendMessage({
-        attachment: fs.createReadStream(outputPath),
+        attachment: fs.createReadStream(outputPath)
       }, event.threadID, () => fs.unlinkSync(outputPath), event.messageID);
     });
   }
