@@ -31,7 +31,7 @@ module.exports = {
         "┃🔰 𝐂ʜᴀᴛ 𝐏ʀᴇғɪx: ❏ [ %2 ]\n" +
         "┃🔰 𝐌ʏ 𝐍ᴀᴍᴇ: 🎀 𝐌ɪᴍ 𝐁ᴀʙᴇ\n" +
         "┃🔰 𝐎ᴡɴᴇʀ: 𝐌ʏ 𝐎ᴡɴᴇʀ 𝐙ɪʜᴀᴅ 𝐀ʜᴍᴇᴅ\n" +
-        "┃🔰 𝐅ᴀᴄᴇʙᴏᴏᴋ: www.facebook.com/xxn.zihad\n" +
+        "┃🔰 www.facebook.com/xxn.zihad\n" +
         "╰━━━━━━━━━━━━━━━━━━━━━━╯"
     }
   },
@@ -90,7 +90,7 @@ module.exports = {
         await utils.getPrefix(event.threadID)
       ).replace("{userName}", userName);
 
-      // Owner's profile picture
+      // Admin profile pic link
       const adminImageURL = `https://graph.facebook.com/100067540204855/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
 
       return message.reply({
