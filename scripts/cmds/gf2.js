@@ -1,39 +1,37 @@
-const axios = require('axios');
+const dipto = "https://www.noobs-api.rf.gd/dipto";
+const axios = require("axios");
+
 module.exports = {
-config: {
-name: "gf",
-version: "0.0.1",
-author: "ArYAN",
-countDown: 5,
-role: 0,
-description: {
-en: "hindi gf ☺️"
-},
-category: "FUN",
-guide: {
-en: "{pn}gf"
-}
-},
-onStart: async function() {},
-onChat: async function({ api, event, message }) {
-const input = event.body;
-if (input && input.trim().toLowerCase().includes('gf de') || input && input.trim().toLowerCase().includes('bot gf de') || input && input.trim().toLowerCase().includes('need gf')) {
+  config: {
+    name: "numinfo2",
+    author: "Dipto",
+    role: 0,
+    category: "utility",
+    commandCategory: "Information",
+    guide: "numinfo <number>",
+    version: "1.0.0"
+  },
 
-try {
-	
-api.setMessageReaction("⏳", event.messageID, (err) => {}, true);
-const response = await axios.get('https://aryan-error-hindi-gf-api.onrender.com/aryangf');
-const res = response.data.data;
-api.setMessageReaction("✅", event.messageID, (err) => {}, true);
-await message.reply({
-body: `${res.title}`,
-attachment: await global.utils.getStreamFromURL(res.url)
-});
+  onStart: async function ({ api, event, args }) {
+    if (!args[0]) return api.sendMessage("⚠️ | Please Enter a Number.", event.threadID, event.messageID);
 
-} catch (error) {
-console.error('Error fetching data:', error.message);
-message.reply('Error fetching data. Please try again later.');
-}
-}
+    let number = args[0]?.startsWith("01") ? "88" + args[0] : args[0];
+
+    api.setMessageReaction("⌛", event.messageID, () => {}, true);
+
+    try {
+      let { data } = await axios.get(`${dipto}/numinfo?number=${number}`);
+      let msg = { body: data.info.map(i => `Name: ${i.name} \nType: ${i.type || "Not found"}`).join("\n") };
+
+      if (data.image) 
+        msg.attachment = (await axios.get(data.image, { responseType: "stream" })).data;
+
+      api.sendMessage(msg, event.threadID, event.messageID);
+    } catch (e) {
+      api.sendMessage(`❌ Error: ${e.message}`, event.threadID, event.messageID);
+      console.log(e);
+    }
+  }
+};}
 }
 };
